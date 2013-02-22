@@ -5,8 +5,7 @@ use strict;
 
 $| = 1;
 
-my $cramtools = EDIT_ME;
-my $cram_to_sam = EDIT_ME;
+my $cram_to_sam = "cram_to_sam";
 my $java = "java";
 my $samtools = "samtools";
 my $cmp = "cmp";
@@ -46,14 +45,14 @@ sub main() {
         my $fn_java_full_cram = "$root.java.full.cram";
 
         # create CRAM
-        my $cmd = "$java -jar $cramtools cram -I $fn " . ($is_sam ? "--input-is-sam " : "") .
+        my $cmd = "java net.sf.cram.CramTools cram -I $fn " . ($is_sam ? "--input-is-sam " : "") .
                   "-O $fn_java_slim_cram -R $ref " .
                   "--max-container-size 10000 --max-slice-size 10000";
         $cmd = "$time $cmd";
         run_cmd($cmd, $fn_java_slim_cram);
         print "# compression ratio: " . ((-s $fn) / (-s $fn_java_slim_cram)) . "\n";
 
-        $cmd = "$java -jar $cramtools cram -I $fn ". ($is_sam ? "--input-is-sam " : "") .
+        $cmd = "java net.sf.cram.CramTools cram -I $fn ". ($is_sam ? "--input-is-sam " : "") .
                "-O $fn_java_full_cram -R $ref " .
                "--max-container-size 10000 --max-slice-size 10000 ".
                "--preserve-read-names --capture-all-tags -L m999";
