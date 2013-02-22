@@ -21,6 +21,8 @@ def tags_to_set(ts):
             continue 
         if options.unknownrg and t == "RG" and v == "UNKNOWN":
             continue
+        if type(v) is list:
+            v = tuple(v)
         s.add((t, v))
     return s
 
@@ -60,15 +62,16 @@ h2 = sam2.header
 
 for i, (r1, r2) in enumerate(izip(sam1.fetch(until_eof=True),
                                   sam2.fetch(until_eof=True))):
-    # FIXME: compare sequences once cram_to_sam diff issue is resolved
-    for f in ["flag", "pos"]:
+    for f in ["flag", "pos", "seq"]:
         check_eq(f, getattr(r1, f), getattr(r2, f), i)
 
+    # need to handle unmapped reads with cigars
     if r1.is_unmapped or r2.is_unmapped:
-        if r1.tid != -1 or r2.tid != -1 :
-            print("{0}: record #{1}: only one read unmapped"\
-                  .format(sys.argv[0], i+1), file=sys.stderr)
-            sys.exit(1)
+        pass
+        #if r1.tid != -1 or r2.tid != -1 :
+        #    print("{0}: record #{1}: only one read unmapped"\
+        #          .format(sys.argv[0], i+1), file=sys.stderr)
+        #    sys.exit(1)
     else:
         check_eq("rname", sam1.getrname(r1.tid), sam2.getrname(r2.tid), i)
         for f in ["mapq", "cigar"]:
